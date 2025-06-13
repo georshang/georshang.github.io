@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💖 My Message to You</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="glass-card" id="login">
+    <h1>💌 A Special Message</h1>
+    <input type="text" id="honeypot" style="display: none;" autocomplete="off">
+    <input type="password" id="password" placeholder="Enter the secret password 💖" />
+    <button onclick="checkPassword()">Unlock Message</button>
+  </div>
+
+  <div class="glass-card" id="messagePage" style="display: none;">
+    <h2>💬 Message for You</h2>
+    <p id="message" class="message-text"></p>
+
+    <h3>💝 Send Your Reply</h3>
+    <textarea id="replyBox" placeholder="Write your reply here..."></textarea>
+    <button onclick="sendReply()">Send Reply</button>
+  </div>
+
+  <script src="js/script.js" defer></script>
+</body>
+</html>
