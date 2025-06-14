@@ -5,28 +5,30 @@
   <title>💌 Msg</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/msg.css" />
+    <!-- 🧠 JS Logic -->
+  <script src="js/login.js"></script> <!-- ✅ Required for session check -->
+  <script src="js/msg.js"></script>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    💌 Message
-  </header>
+  <header>💌 Message</header>
 
-  <!-- Message container -->
   <div class="container">
     <div class="glass-box" id="message-box">
-      <p id="message">Loading message...</p>
-      <p id="status-msg" class="status"></p> <!-- Reply status message -->
+      <!-- 📥 Initial message from Msg/message.txt -->
+      <!-- <p id="message">Loading message...</p> -->
+
+      <!-- 🔄 Live replies from Telegram -->
+      <div id="live-replies" class="chat-box"></div>
+
+      <!-- ℹ️ Status or error messages -->
+      <p id="status-msg" class="status"></p>
     </div>
   </div>
 
-  <!-- Reply input fixed at bottom -->
+  <!-- ✏️ Reply input section -->
   <div class="reply-bar">
     <textarea id="replyBox" rows="1" placeholder="Write a reply..."></textarea>
     <button onclick="sendReply()">Send</button>
   </div>
-
-  <!-- JS Logic -->
-  <script src="js/msg.js"></script>
 </body>
 </html>

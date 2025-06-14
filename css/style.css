@@ -1,87 +1,27 @@
-/* Reset and basic styling */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* your existing glass and base styles... */
+
+.bubble-left, .bubble-right {
+  max-width: 80%;
+  padding: 0.8rem 1rem;
+  margin: 0.5rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  position: relative;
 }
 
-body {
-  height: 100vh;
-  background: url("../assets/bg.jpg") no-repeat center center fixed;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(4px);
+.bubble-left {
+  background: rgba(255,255,255,0.1);
+  align-self: flex-start;
 }
 
-/* Login Box */
-.login-container {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-  padding: 2rem;
-  width: 300px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  color: #ffffff;
+.bubble-right {
+  background: rgba(144,238,144,0.5);
+  align-self: flex-end;
 }
 
-/* Heading */
-.login-container h1 {
-  font-size: 2em;
-  margin-bottom: 0.5em;
-}
-
-/* Paragraph */
-.login-container p {
-  margin-bottom: 1em;
-  font-size: 0.95em;
-  color: #f0f0f0;
-}
-
-/* Input field */
-.login-container input[type="password"],
-.login-container input[type="text"] {
-  width: 100%;
-  padding: 0.75em;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  margin-bottom: 1em;
-  font-size: 1em;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.login-container input::placeholder {
-  color: #eee;
-}
-
-/* Error Message */
-.error-text {
-  color: #ff6b6b;
-  font-size: 0.9em;
-  margin-bottom: 1em;
-  min-height: 1.2em;
-}
-
-/* Button */
-.login-container button {
-  padding: 0.7em 1.5em;
-  background-color: #ffffff;
-  color: #333;
-  font-weight: bold;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.login-container button:hover {
-  background-color: #ff69b4;
-  color: white;
-  transform: scale(1.05);
+.bubble-time {
+  font-size: 0.7rem;
+  color: #ccc;
+  margin-top: 0.4rem;
+  text-align: right;
 }
