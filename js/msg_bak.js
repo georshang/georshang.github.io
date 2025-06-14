@@ -86,7 +86,7 @@ async function fetchTelegramMessages() {
       bubble.textContent = initial_msg;
       document.getElementById('live-replies').appendChild(bubble);
       document.getElementById('live-replies').scrollTop =
-        document.getElementById('live-replies').scrollHeight;
+      document.getElementById('live-replies').scrollHeight;
       hardcodedShown = true;
 
       console.log('✅ Fallback message shown:', initial_msg);

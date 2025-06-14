@@ -59,7 +59,6 @@ async function checkPassword() {
 
   if (isCorrect) {
     sessionStorage.setItem("authenticated", "yes");
-    sessionStorage.setItem("auth_time", Date.now().toString());
     window.location.href = "msg.html";
   } else {
     errorMsgEl.textContent = "💔 Incorrect password. Try again.";
@@ -70,67 +69,12 @@ async function checkPassword() {
 
 function validateSession() {
   const auth = sessionStorage.getItem("authenticated");
-  const authTime = sessionStorage.getItem("auth_time");
-  const MAX_SESSION_DURATION = 3 * 60 * 1000; // 3 minutes
 
-  if (!auth || !authTime) {
+  if (!auth) {
     alert("⏰ Session expired. Please login again.");
     redirectToLogin();
     return;
   }
-
-  const elapsed = Date.now() - parseInt(authTime, 10);
-
-  if (elapsed >= MAX_SESSION_DURATION) {
-    sessionStorage.clear();
-    alert("⏰ Session expired. Please login again.");
-    redirectToLogin();
-    return;
-  }
-
-  const remainingTime = MAX_SESSION_DURATION - elapsed;
-
-  setTimeout(() => {
-    sessionStorage.clear();
-    alert("⏰ Session expired. Please login again.");
-    redirectToLogin();
-  }, remainingTime);
-
-  startSessionTimer(MAX_SESSION_DURATION);
-  extendSessionOnInteraction(MAX_SESSION_DURATION);
-}
-
-function startSessionTimer(maxDuration) {
-  const interval = setInterval(() => {
-    const authTime = parseInt(sessionStorage.getItem("auth_time") || "0", 10);
-    if (Date.now() - authTime > maxDuration) {
-      clearInterval(interval);
-      sessionStorage.clear();
-      alert("⏰ Session expired. Please login again.");
-      redirectToLogin();
-    }
-  }, 5000);
-}
-
-function extendSessionOnInteraction(maxDuration) {
-  let lastActivity = Date.now();
-
-  const resetTimer = () => {
-    lastActivity = Date.now();
-    sessionStorage.setItem("auth_time", lastActivity.toString());
-  };
-
-  ["click", "keydown", "mousemove", "scroll", "touchstart"].forEach(event =>
-    document.addEventListener(event, resetTimer)
-  );
-
-  setInterval(() => {
-    if (Date.now() - lastActivity > maxDuration) {
-      sessionStorage.clear();
-      alert("⏰ Session expired due to inactivity.");
-      redirectToLogin();
-    }
-  }, 5000);
 }
 
 function redirectToLogin() {
