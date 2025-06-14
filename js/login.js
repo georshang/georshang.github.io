@@ -1,117 +1,89 @@
-document.addEventListener("DOMContentLoaded", async () => {
+window.onload = async function () {
+  const auth = sessionStorage.getItem("authenticated");
+  const authTime = sessionStorage.getItem("auth_time");
+
+  if (!auth || !authTime) {
+    redirectToLogin();
+    return;
+  }
+
+  const elapsed = Date.now() - parseInt(authTime, 10);
+  const MAX_SESSION_DURATION = 3 * 60 * 1000; // 3 minutes
+
+  if (elapsed > MAX_SESSION_DURATION) {
+    sessionStorage.clear();
+    alert("Session expired. Please login again.");
+    redirectToLogin();
+    return;
+  }
+
+  // Optional: auto-expire session after the remaining time
+  setTimeout(() => {
+    sessionStorage.clear();
+    alert("Session expired. Please login again.");
+    redirectToLogin();
+  }, MAX_SESSION_DURATION - elapsed);
+
   try {
-    const config = await loadConfig();
+    const config = await fetch('settings/config.json').then(res => res.json());
     window._appConfig = config;
 
-    await logVisit();           // Wait for visit log to complete
-    attachLinkLogger();         // Then attach click listener
-  } catch (err) {
-    console.error("Initialization failed", err);
-  }
-});
+    const messageText = await fetch('Msg/message.txt').then(res => res.text());
+    document.getElementById('message').textContent = messageText;
 
-// Load config.json
-async function loadConfig() {
-  try {
-    const response = await fetch("settings/config.json");
-    return await response.json();
-  } catch (err) {
-    console.error("Failed to load config.json", err);
-    return null;
-  }
-}
+    const ipInfo = await fetch("https://ipapi.co/json/").then(res => res.json());
 
-// Log visitor info to Telegram
-async function logVisit() {
-  try {
-    const config = window._appConfig;
-    if (!config || !config.bot_token || !config.chat_id) {
-      console.warn("Missing config, skipping visit log.");
-      return;
-    }
-
-    const ipRes = await fetch("https://ipapi.co/json/");
-    const ipInfo = await ipRes.json();
-
-    const logMessage =
-      `🔔 [PAGE VISIT]\n` +
-      `Time: ${new Date().toString()}\n` +
-      `IP: ${ipInfo.ip || "Unknown"}\n` +
-      `Location: ${ipInfo.city || "?"}, ${ipInfo.region || "?"}, ${ipInfo.country_name || "?"}\n` +
+    const logText =
+      `📩 [MESSAGE VIEWED]\n` +
+      `Time: ${new Date().toISOString()}\n` +
+      `IP: ${ipInfo.ip}\n` +
+      `Location: ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country_name}\n` +
       `UserAgent: ${navigator.userAgent}`;
 
-    await sendToTelegram(logMessage);
+    await sendToTelegram(logText);
   } catch (err) {
-    console.error("Visit logging failed", err);
+    console.error("Failed to load message or send log", err);
   }
-}
+};
 
-// Check password and log attempt
-async function checkPassword() {
-  const passwordInput = document.getElementById("password").value;
-  const honeypot = document.getElementById("honeypot").value;
-  if (honeypot !== "") return; // Bot trap
-
-  const config = window._appConfig;
-  const correctPassword = config.password;
-  const status = passwordInput === correctPassword ? '✅ Success' : '❌ Failed';
-
-  const message =
-    `🔐 [LOGIN ATTEMPT]\n` +
-    `Time: ${new Date().toString()}\n` +
-    `UA: ${navigator.userAgent}\n` +
-    `Entered: ${passwordInput}\n` +
-    `Status: ${status}`;
-
-  await sendToTelegram(message);
-
-  if (status === '✅ Success') {
-    sessionStorage.setItem("authenticated", "yes");
-    window.location.href = "msg.html";
-  } else {
-    alert("Wrong password!");
-  }
-}
-
-// Send message to Telegram
-async function sendToTelegram(text) {
-  const config = window._appConfig;
-  if (!config || !config.bot_token || !config.chat_id) {
-    console.warn("Telegram config missing");
+async function sendReply() {
+  const reply = document.getElementById("replyBox").value.trim();
+  if (!reply) {
+    alert("Please write a message first.");
     return;
   }
 
   try {
-    await fetch(`https://api.telegram.org/bot${config.bot_token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: config.chat_id,
-        text: text
-      })
-    });
+    const config = window._appConfig || await fetch('settings/config.json').then(res => res.json());
+
+    const logText =
+      `💌 [REPLY]\n` +
+      `Time: ${new Date().toISOString()}\n` +
+      `Reply: ${reply}`;
+
+    await sendToTelegram(logText);
+
+    alert("Your reply has been sent 💌");
+    document.getElementById("replyBox").value = "";
   } catch (err) {
-    console.error("Telegram send failed", err);
+    console.error("Failed to send reply", err);
+    alert("Failed to send reply. Try again.");
   }
 }
 
-// Log any link click
-function attachLinkLogger() {
-  document.body.addEventListener("click", async (e) => {
-    if (e.target.tagName === "A") {
-      const data = {
-        type: "link_click",
-        time: new Date().toString(),
-        href: e.target.href,
-        text: e.target.innerText
-      };
+async function sendToTelegram(message) {
+  const config = window._appConfig;
 
-      const message =
-        `🔗 [LINK CLICK]\n` +
-        `Time: ${data.time}\n` +
-        `Link: ${data.href}\nText: ${data.text}`;
-
-      await sendToTelegram(message);
-    }
+  await fetch(`https://api.telegram.org/bot${config.bot_token}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: config.chat_id,
+      text: message
+    })
   });
+}
+
+function redirectToLogin() {
+  window.location.href = "index.html"; // update if your login page has a different name
 }
