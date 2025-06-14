@@ -1,56 +1,58 @@
-/* Reset and background */
 body, html {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #1e1e2f, #2e2e48);
+  background: linear-gradient(135deg, #25273c, #36395a);
   height: 100%;
   color: #fff;
 }
 
-/* Center container */
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  padding: 1rem;
+  padding: 2rem;
+  min-height: 100vh;
   box-sizing: border-box;
 }
 
-/* Login box */
 .glass-box {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 1rem;
-  padding: 2rem;
-  max-width: 400px;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  max-width: 700px;
   width: 100%;
+  font-size: 1.2rem;
+  line-height: 1.7;
 }
 
-/* Inputs and buttons */
-input, textarea {
+#message {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  white-space: pre-wrap;
+}
+
+textarea {
   width: 100%;
   padding: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   border-radius: 0.5rem;
   border: none;
   background: rgba(255, 255, 255, 0.15);
   color: white;
   font-size: 1rem;
+  resize: vertical;
   outline: none;
 }
 
-input::placeholder, textarea::placeholder {
-  color: #ccc;
-}
-
 button {
-  width: 100%;
   margin-top: 1rem;
+  width: 100%;
   padding: 0.75rem;
   border-radius: 0.5rem;
   border: none;
@@ -65,30 +67,7 @@ button:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Label & heading */
-label {
-  margin-top: 1rem;
-  display: block;
-  font-size: 0.95rem;
-}
-
 h2 {
   text-align: center;
-  margin-bottom: 1rem;
-}
-
-/* Hide honeypot */
-#honeypot {
-  display: none;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .glass-box {
-    padding: 1.25rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
+  margin-bottom: 1.5rem;
 }

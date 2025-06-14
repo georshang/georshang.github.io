@@ -1,6 +1,6 @@
 {
-  "TELEGRAM_BOT_TOKEN": "7520005562:AAETRfAuXhZXOQhuBQXL1pbT4PEGWE_7exk",
-  "TELEGRAM_CHAT_ID": "6138777908",
-  "PASSWORD": "password"
+  "bot_token": "7520005562:AAETRfAuXhZXOQhuBQXL1pbT4PEGWE_7exk",
+  "chat_id": "6138777908",
+  "password": "password"
 }
 

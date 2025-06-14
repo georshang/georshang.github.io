@@ -2,27 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>💖 My Message to You</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>💖 Love Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/login.css" />
 </head>
 <body>
-  <div class="glass-card" id="login">
-    <h1>💌 A Special Message</h1>
-    <input type="text" id="honeypot" style="display: none;" autocomplete="off">
-    <input type="password" id="password" placeholder="Enter the secret password 💖" />
-    <button onclick="checkPassword()">Unlock Message</button>
+  <div class="container">
+    <div class="glass-box">
+      <h2>💖 Secret Message</h2>
+      <label for="password">Enter Password</label>
+      <input type="password" id="password" placeholder="Type here..." />
+      <input type="text" id="honeypot" autocomplete="off" />
+      <button onclick="checkPassword()">Unlock</button>
+    </div>
   </div>
-
-  <div class="glass-card" id="messagePage" style="display: none;">
-    <h2>💬 Message for You</h2>
-    <p id="message" class="message-text"></p>
-
-    <h3>💝 Send Your Reply</h3>
-    <textarea id="replyBox" placeholder="Write your reply here..."></textarea>
-    <button onclick="sendReply()">Send Reply</button>
-  </div>
-
-  <script src="js/script.js" defer></script>
+  <script src="js/login.js"></script>
 </body>
 </html>
