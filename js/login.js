@@ -1,22 +1,27 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const config = await loadConfig();
-  window._appConfig = config;
+  try {
+    const config = await loadConfig();
+    window._appConfig = config;
 
-  const pathname = window.location.pathname;
+    const pathname = window.location.pathname;
 
-  const passwordInput = document.getElementById("password");
-  const errorMsgEl = document.getElementById("error-msg");
+    const passwordInput = document.getElementById("password");
+    const errorMsgEl = document.getElementById("error-msg");
 
-  if (passwordInput && errorMsgEl) {
-    passwordInput.addEventListener("input", () => {
-      errorMsgEl.textContent = "";
-    });
-  }
+    if (passwordInput && errorMsgEl) {
+      passwordInput.addEventListener("input", () => {
+        errorMsgEl.textContent = "";
+      });
+    }
 
-  if (pathname.endsWith("msg.html")) {
-    validateSession();
-  } else {
-    logVisit();
+    if (pathname.endsWith("msg.html")) {
+      validateSession();
+    } else {
+      logVisit();
+    }
+  } catch (e) {
+    console.error("❌ Failed to load config:", e);
+    alert("⚠️ Failed to load configuration. Please try again later.");
   }
 });
 
@@ -24,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadConfig() {
   const response = await fetch("settings/config.json");
+  if (!response.ok) throw new Error("Config load failed");
   return await response.json();
 }
 
@@ -69,6 +75,7 @@ function validateSession() {
   const MAX_SESSION_DURATION = 60 * 1000; // 1 minute
 
   if (!auth || !authTime) {
+    alert("⏰ Session expired. Please login again.");
     redirectToLogin();
     return;
   }
@@ -83,11 +90,50 @@ function validateSession() {
   }
 
   const remainingTime = MAX_SESSION_DURATION - elapsed;
+
+  // ✅ Auto logout warning
   setTimeout(() => {
     sessionStorage.clear();
     alert("⏰ Session expired. Please login again.");
     redirectToLogin();
   }, remainingTime);
+
+  // ✅ Track session in background
+  startSessionTimer(remainingTime);
+
+  // ✅ Optional: Track user activity to refresh session (uncomment if needed)
+  // extendSessionOnInteraction();
+}
+
+function startSessionTimer(remainingTimeMs) {
+  const interval = setInterval(() => {
+    const authTime = parseInt(sessionStorage.getItem("auth_time") || "0", 10);
+    if (Date.now() - authTime > 60 * 1000) {
+      clearInterval(interval);
+      sessionStorage.clear();
+      alert("⏰ Session expired. Please login again.");
+      redirectToLogin();
+    }
+  }, 5000); // every 5 sec
+}
+
+// Optional
+function extendSessionOnInteraction() {
+  let lastActivity = Date.now();
+  const resetTimer = () => {
+    lastActivity = Date.now();
+    sessionStorage.setItem("auth_time", lastActivity.toString());
+  };
+  ["click", "keydown", "mousemove", "scroll"].forEach(event =>
+    document.addEventListener(event, resetTimer)
+  );
+  setInterval(() => {
+    if (Date.now() - lastActivity > 60 * 1000) {
+      sessionStorage.clear();
+      alert("⏰ Session expired due to inactivity.");
+      redirectToLogin();
+    }
+  }, 5000);
 }
 
 function redirectToLogin() {
@@ -122,7 +168,7 @@ async function logToTelegram(data) {
   }
 }
 
-// ------------------ Get IP Info ------------------
+// ------------------ Visit Logging ------------------
 
 async function logVisit() {
   try {
