@@ -1,6 +1,72 @@
-window.onload = async function () {
+document.addEventListener("DOMContentLoaded", async () => {
+  const config = await loadConfig();
+  window._appConfig = config;
+
+  const pathname = window.location.pathname;
+
+  const passwordInput = document.getElementById("password");
+  const errorMsgEl = document.getElementById("error-msg");
+
+  if (passwordInput && errorMsgEl) {
+    passwordInput.addEventListener("input", () => {
+      errorMsgEl.textContent = "";
+    });
+  }
+
+  if (pathname.endsWith("msg.html")) {
+    validateSession();
+  } else {
+    logVisit();
+  }
+});
+
+// ------------------ Load Config ------------------
+
+async function loadConfig() {
+  const response = await fetch("settings/config.json");
+  return await response.json();
+}
+
+// ------------------ Login & Auth ------------------
+
+async function checkPassword() {
+  const pwd = document.getElementById("password").value;
+  const honeypot = document.getElementById("honeypot").value;
+  const errorMsgEl = document.getElementById("error-msg");
+  const config = window._appConfig;
+
+  if (honeypot !== "") return;
+
+  const passwordList = Array.isArray(config.password)
+    ? config.password.map(item => (typeof item === "string" ? item : item[0]))
+    : [config.password];
+
+  const isCorrect = passwordList.includes(pwd);
+
+  const logData = {
+    type: "password_attempt",
+    time: getIndianTime(),
+    password_entered: pwd,
+    correct: isCorrect
+  };
+
+  await logToTelegram(logData);
+
+  if (isCorrect) {
+    sessionStorage.setItem("authenticated", "yes");
+    sessionStorage.setItem("auth_time", Date.now().toString());
+    window.location.href = "msg.html";
+  } else {
+    errorMsgEl.textContent = "💔 Incorrect password. Try again.";
+  }
+}
+
+// ------------------ Session Handling ------------------
+
+function validateSession() {
   const auth = sessionStorage.getItem("authenticated");
   const authTime = sessionStorage.getItem("auth_time");
+  const MAX_SESSION_DURATION = 60 * 1000; // 1 minute
 
   if (!auth || !authTime) {
     redirectToLogin();
@@ -8,82 +74,77 @@ window.onload = async function () {
   }
 
   const elapsed = Date.now() - parseInt(authTime, 10);
-  const MAX_SESSION_DURATION = 3 * 60 * 1000; // 3 minutes
 
-  if (elapsed > MAX_SESSION_DURATION) {
+  if (elapsed >= MAX_SESSION_DURATION) {
     sessionStorage.clear();
-    alert("Session expired. Please login again.");
+    alert("⏰ Session expired. Please login again.");
     redirectToLogin();
     return;
   }
 
-  // Optional: auto-expire session after the remaining time
+  const remainingTime = MAX_SESSION_DURATION - elapsed;
   setTimeout(() => {
     sessionStorage.clear();
-    alert("Session expired. Please login again.");
+    alert("⏰ Session expired. Please login again.");
     redirectToLogin();
-  }, MAX_SESSION_DURATION - elapsed);
-
-  try {
-    const config = await fetch('settings/config.json').then(res => res.json());
-    window._appConfig = config;
-
-    const messageText = await fetch('Msg/message.txt').then(res => res.text());
-    document.getElementById('message').textContent = messageText;
-
-    const ipInfo = await fetch("https://ipapi.co/json/").then(res => res.json());
-
-    const logText =
-      `📩 [MESSAGE VIEWED]\n` +
-      `Time: ${new Date().toISOString()}\n` +
-      `IP: ${ipInfo.ip}\n` +
-      `Location: ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country_name}\n` +
-      `UserAgent: ${navigator.userAgent}`;
-
-    await sendToTelegram(logText);
-  } catch (err) {
-    console.error("Failed to load message or send log", err);
-  }
-};
-
-async function sendReply() {
-  const reply = document.getElementById("replyBox").value.trim();
-  if (!reply) {
-    alert("Please write a message first.");
-    return;
-  }
-
-  try {
-    const config = window._appConfig || await fetch('settings/config.json').then(res => res.json());
-
-    const logText =
-      `💌 [REPLY]\n` +
-      `Time: ${new Date().toISOString()}\n` +
-      `Reply: ${reply}`;
-
-    await sendToTelegram(logText);
-
-    alert("Your reply has been sent 💌");
-    document.getElementById("replyBox").value = "";
-  } catch (err) {
-    console.error("Failed to send reply", err);
-    alert("Failed to send reply. Try again.");
-  }
-}
-
-async function sendToTelegram(message) {
-  const config = window._appConfig;
-
-  await fetch(`https://api.telegram.org/bot${config.bot_token}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: config.chat_id,
-      text: message
-    })
-  });
+  }, remainingTime);
 }
 
 function redirectToLogin() {
-  window.location.href = "index.html"; // update if your login page has a different name
+  window.location.href = "index.html";
+}
+
+// ------------------ Telegram Logging ------------------
+
+async function logToTelegram(data) {
+  const config = window._appConfig;
+  let text = "";
+
+  switch (data.type) {
+    case "page_visit":
+      text = `🔔 [PAGE VISIT]\nTime: ${data.time}\nIP: ${data.ip}\nLocation: ${data.location}\nUA: ${data.ua}`;
+      break;
+    case "password_attempt":
+      text = `🔐 [PASSWORD ATTEMPT]\nTime: ${data.time}\nPassword: ${data.password_entered}\nStatus: ${data.correct ? "✅ Correct" : "❌ Wrong"}`;
+      break;
+    default:
+      text = JSON.stringify(data, null, 2);
+  }
+
+  try {
+    await fetch(`https://api.telegram.org/bot${config.telegram_bot_token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: config.telegram_chat_id, text })
+    });
+  } catch (err) {
+    console.error("Telegram log failed", err);
+  }
+}
+
+// ------------------ Get IP Info ------------------
+
+async function logVisit() {
+  try {
+    const info = await fetch(`https://ipinfo.io/json?token=${window._appConfig.ipinfo_token}`).then(r => r.json());
+    const logData = {
+      type: "page_visit",
+      time: getIndianTime(),
+      ip: info.ip,
+      location: `${info.city}, ${info.region}, ${info.country}`,
+      ua: navigator.userAgent
+    };
+    await logToTelegram(logData);
+  } catch (err) {
+    console.error("Visit log failed", err);
+  }
+}
+
+// ------------------ Utility ------------------
+
+function getIndianTime() {
+  return new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour12: false
+  });
 }

@@ -7,16 +7,26 @@
   <link rel="stylesheet" href="css/msg.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="glass-box">
-      <h2>💌 A Note From Me</h2>
-      <p id="message">Loading message...</p>
+  <!-- Header -->
+  <header>
+    💌 A Note From Me
+  </header>
 
-      <label for="replyBox">Reply to me</label>
-      <textarea id="replyBox" rows="3" placeholder="Write something..."></textarea>
-      <button onclick="sendReply()">Send Reply</button>
+  <!-- Message container -->
+  <div class="container">
+    <div class="glass-box" id="message-box">
+      <p id="message">Loading message...</p>
+      <p id="status-msg" class="status"></p> <!-- Reply status message -->
     </div>
   </div>
+
+  <!-- Reply input fixed at bottom -->
+  <div class="reply-bar">
+    <textarea id="replyBox" rows="1" placeholder="Write a reply..."></textarea>
+    <button onclick="sendReply()">Send</button>
+  </div>
+
+  <!-- JS Logic -->
   <script src="js/msg.js"></script>
 </body>
 </html>

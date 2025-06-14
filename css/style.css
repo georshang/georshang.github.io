@@ -1,105 +1,87 @@
-/* Reset and background */
-body, html {
+/* Reset and basic styling */
+* {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #1e1e2f, #2e2e48);
-  height: 100%;
-  color: #fff;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Center container */
-.container {
+body {
+  height: 100vh;
+  background: url("../assets/bg.jpg") no-repeat center center fixed;
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  padding: 1rem;
-  box-sizing: border-box;
+  backdrop-filter: blur(4px);
 }
 
-/* Login/message glass box */
-.glass-box {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 1rem;
-  padding: 2.5rem;
-  max-width: 420px;
-  width: 100%;
-}
-
-/* Inputs and textareas */
-input, textarea {
-  width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 0.75rem;
-  border: none;
+/* Login Box */
+.login-container {
   background: rgba(255, 255, 255, 0.15);
-  color: white;
-  font-size: 1.1rem;
-  outline: none;
-  box-sizing: border-box;
-}
-
-/* Placeholder styling */
-input::placeholder, textarea::placeholder {
-  color: #ccc;
-}
-
-/* Buttons */
-button {
-  width: 100%;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 1.15rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  background: rgba(255, 255, 255, 0.35);
-  transform: scale(1.03);
-}
-
-/* Label & heading */
-label {
-  margin-top: 1rem;
-  display: block;
-  font-size: 0.95rem;
-}
-
-h2 {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 300px;
   text-align: center;
-  margin-bottom: 1rem;
-  font-size: 1.8rem;
+  backdrop-filter: blur(10px);
+  color: #ffffff;
 }
 
-/* Hide honeypot */
-#honeypot {
-  display: none;
+/* Heading */
+.login-container h1 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .glass-box {
-    padding: 1.5rem;
-  }
+/* Paragraph */
+.login-container p {
+  margin-bottom: 1em;
+  font-size: 0.95em;
+  color: #f0f0f0;
+}
 
-  h2 {
-    font-size: 1.5rem;
-  }
+/* Input field */
+.login-container input[type="password"],
+.login-container input[type="text"] {
+  width: 100%;
+  padding: 0.75em;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-bottom: 1em;
+  font-size: 1em;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
 
-  input, textarea, button {
-    font-size: 1rem;
-    padding: 0.9rem;
-  }
+.login-container input::placeholder {
+  color: #eee;
+}
+
+/* Error Message */
+.error-text {
+  color: #ff6b6b;
+  font-size: 0.9em;
+  margin-bottom: 1em;
+  min-height: 1.2em;
+}
+
+/* Button */
+.login-container button {
+  padding: 0.7em 1.5em;
+  background-color: #ffffff;
+  color: #333;
+  font-weight: bold;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-container button:hover {
+  background-color: #ff69b4;
+  color: white;
+  transform: scale(1.05);
 }

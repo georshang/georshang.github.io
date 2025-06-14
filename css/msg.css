@@ -1,4 +1,4 @@
-/* Full background and base font */
+/* Base styling */
 body, html {
   margin: 0;
   padding: 0;
@@ -6,19 +6,30 @@ body, html {
   background: linear-gradient(135deg, #25273c, #36395a);
   height: 100%;
   color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Centering container */
+/* Header at top */
+header {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+  background: transparent;
+}
+
+/* Message container */
 .container {
+  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  min-height: 100vh;
+  align-items: flex-start;
+  padding: 2rem 1rem;
   box-sizing: border-box;
 }
 
-/* Glass effect message box */
+/* Message box with glass effect */
 .glass-box {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(14px);
@@ -26,85 +37,95 @@ body, html {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 1.5rem;
-  padding: 2.5rem;
+  padding: 2rem;
   max-width: 700px;
   width: 100%;
   font-size: 1.2rem;
   line-height: 1.7;
+  text-align: center;
 }
 
-/* Displayed message text */
 #message {
   font-size: 1.4rem;
   font-weight: 500;
-  margin-bottom: 2rem;
   white-space: pre-wrap;
-  text-align: center;
   color: #f0f0f0;
 }
 
-/* Message input area */
-textarea {
-  width: 100%;
+/* Reply bar fixed at bottom */
+.reply-bar {
+  display: flex;
+  gap: 0.5rem;
   padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 0.75rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.reply-bar textarea {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
   border: none;
   background: rgba(255, 255, 255, 0.15);
   color: white;
-  font-size: 1.1rem;
-  resize: vertical;
+  font-size: 1rem;
+  resize: none;
   outline: none;
   box-sizing: border-box;
 }
 
-textarea::placeholder {
+.reply-bar textarea::placeholder {
   color: #ccc;
 }
 
-/* Button styling */
-button {
-  margin-top: 1.5rem;
-  width: 100%;
-  padding: 1rem;
-  border-radius: 0.75rem;
+.reply-bar button {
+  padding: 0.75rem 1.2rem;
+  border-radius: 1rem;
   border: none;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
+.reply-bar button:hover {
   background: rgba(255, 255, 255, 0.35);
   transform: scale(1.03);
 }
 
-/* Heading */
-h2 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
-}
-
-/* Responsive */
+/* Mobile responsiveness */
 @media (max-width: 600px) {
+  header {
+    font-size: 1.4rem;
+  }
+
   .glass-box {
     padding: 1.5rem;
-  }
-
-  #message {
-    font-size: 1.2rem;
-  }
-
-  textarea, button {
     font-size: 1rem;
-    padding: 0.9rem;
   }
 
-  h2 {
-    font-size: 1.6rem;
+  .reply-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reply-bar button {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 }
+
+.status {
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
